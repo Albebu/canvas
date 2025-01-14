@@ -1,0 +1,58 @@
+// Imports
+import Player from './Jinx/Player.js'
+import Enemy from './Enemy.js'
+
+// Canvas context and id
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+window.addEventListener("resize", resizeCanvas);
+
+// Llamada inicial para ajustar el tamaño al cargar
+resizeCanvas();
+
+// Configuración del juego
+const player = new Player(50, 50);
+const enemy = generateRandomEnemy();
+const bullets = [];
+const keys = {};
+
+// Eventos de teclado
+document.addEventListener("keydown", (e) => {
+  keys[e.key] = true;
+});
+
+document.addEventListener("keyup", (e) => {
+  keys[e.key] = false;
+});
+
+// Función para generar enemigos
+function generateRandomEnemy() {
+  const width = canvas.width;  // Se obtiene el tamaño actualizado
+  const height = canvas.height;  // Se obtiene el tamaño actualizado
+  return new Enemy(Math.random() * width, Math.random() * height);
+}
+
+// Bucle principal
+function draw() {
+  const width = canvas.width;  // Se obtiene el tamaño actualizado
+  const height = canvas.height;  // Se obtiene el tamaño actualizado
+  
+  ctx.clearRect(0, 0, width, height);
+
+  // Verificar colisión y dibujar elementos
+  enemy.checkCollisions([player]); // Verificar colisión con el jugador
+  enemy.checkCollisions(bullets);  // Verificar colisión con las balas
+
+  // Dibujar jugador y enemigo
+  player.loop(ctx, width, height, keys)
+  enemy.draw(ctx);
+}
+
+// Inicia el juego
+setInterval(draw, 20);
